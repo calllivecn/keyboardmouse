@@ -1,0 +1,4 @@
+*.logs
+*.tar
+*.tar.*
+__pycache__/
