@@ -2,3 +2,5 @@
 *.tar
 *.tar.*
 __pycache__/
+keyboardmouse.egg-info/
+build
