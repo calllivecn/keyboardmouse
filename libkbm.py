@@ -64,6 +64,11 @@ def getkbm(baseinput="/dev/input"):
     #    device = libevdev.Device(fd)
     #    print(device.name)
 
+def disableDevice(dev):
+    """
+    dev.grab() device.
+    """
+    pass
 
 class VirtualKeyboardMouse:
     """
@@ -74,6 +79,10 @@ class VirtualKeyboardMouse:
         self.device.name = "Virtual Keyboard Mouse"
         self.__add_mouse_keyboard_events()
         self.uinput = self.device.create_uinput_device()
+
+        # 在创建虚拟输入设备后等一秒，马上使用设备，
+        # 会导致事件不生效。
+        sleep(1)
 
         self._delay = 0.01
 
@@ -269,12 +278,11 @@ class VirtualKeyboardMouse:
     def mouseclick(self, btn):
         
         # mouse click event list
-        e = self.__mousebtn2seq(btn,downup=1)
-        self.uinput.send_events(e) 
-        sleep(self._sleep)
-        e = self.__mousebtn2seq(btn, downup=0)
-        self.uinput.send_events(e) 
-        sleep(self._sleep)
+        self.uinput.send_events(self.__mousebtn2seq(btn,downup=1)) 
+        sleep(self._delay)
+        
+        self.uinput.send_events(self.__mousebtn2seq(btn, downup=0)) 
+        sleep(self._delay)
 
     def mousewheel(self, updown):
         """
