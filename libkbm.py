@@ -8,6 +8,8 @@
 kbm is keyboard mouse
 """
 
+#__all__ = [
+
 import os
 from os import path
 from time import sleep
