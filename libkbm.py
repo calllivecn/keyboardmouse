@@ -278,13 +278,9 @@ class VirtualKeyboardMouse:
         sleep(self._delay)
 
     def mouseclick(self, btn):
-        
         # mouse click event list
-        self.uinput.send_events(self.__mousebtn2seq(btn,downup=1)) 
-        sleep(self._delay)
-        
-        self.uinput.send_events(self.__mousebtn2seq(btn, downup=0)) 
-        sleep(self._delay)
+        self.mousebtndown(btn)
+        self.mousebtnup(btn)
 
     def mousewheel(self, updown):
         """
