@@ -14,6 +14,8 @@ import os
 from os import path
 from time import sleep
 
+from threading import Thread
+
 
 import libevdev as ev
 from libevdev import (
@@ -22,11 +24,12 @@ from libevdev import (
                         )
 
 
-from logs import logger
+from logs import logger, setLevel
 
 
 def getkbm(baseinput="/dev/input"):
-    kbms = []
+    mouses = []
+    keyboards = []
     
     for dev in os.listdir(baseinput):
 
@@ -48,29 +51,52 @@ def getkbm(baseinput="/dev/input"):
         KEYBOARD = [EV_KEY.KEY_ESC, EV_KEY.KEY_SPACE, EV_KEY.KEY_BACKSPACE, EV_KEY.KEY_0, EV_KEY.KEY_A, EV_KEY.KEY_Z, EV_KEY.KEY_9, EV_KEY.KEY_F2]
     
         if all(map(device.has, MOUSE)):
-            logger.info("应该是鼠标了: ", device.name, "路径：", device.fd)
-            kbms.append(devpath)
+            logger.info("应该是鼠标了: {} 路径：{}".format(device.name, device.fd))
+            mouses.append(devpath)
     
         elif all(map(device.has, KEYBOARD)):
-            logger.info("应该是键盘了: ", device.name, "路径：", device.fd)
-            kbms.append(devpath)
+            logger.info("应该是键盘了: {} 路径：{}".format(device.name, device.fd))
+            keyboards.append(devpath)
     
         #else:
             #print("其他输入设备：", device.name, "路径：",device.fd)
     
         devfd.close()
 
-    return kbms
+    return (mouses, keyboards)
     
     #with open(path.join(baseinput, "event0"), "rb") as fd:
     #    device = libevdev.Device(fd)
     #    print(device.name)
 
-def disableDevice(dev):
+def __grab_discard(dev):
+    """
+    fd?
+    """
+    logger.debug("disable {}".format(dev.name))
+    try:
+        dev.grab()
+    except ev.device.DeviceGrabError:
+        logger.warn("{} grab() 失败".format(dev.name))
+        return
+
+    for _ in dev.events():
+        pass
+
+def disableDevice(device):
     """
     dev.grab() device.
     """
-    pass
+    fd = open(device, "rb")
+
+    devfd = ev.Device(fd)
+    if devfd.name == "Virtual Keyboard Mouse":
+        fd.close()
+        return 
+    
+    th = Thread(target=__grab_discard, args=(devfd,), daemon=True)
+    th.start()
+    
 
 class VirtualKeyboardMouse:
     """
