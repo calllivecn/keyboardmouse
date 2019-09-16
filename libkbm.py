@@ -42,7 +42,7 @@ def getkbm(baseinput="/dev/input"):
         try:
             device = Device(devfd)
         except (OSError, Exception) as e :
-            logger.error("打开 {} 异常：{}".format(dev, e))
+            logger.debug("打开 {} 异常：{}".format(dev, e))
             continue
     
         #if device.has(EV_REL.REL_X) device.has(EV_REL.REL_Y and device.has(EV_KEY.BTN_LEFT) and device.has(EV_KEY.BTN_RIGHT) and device.has(EV_KEY.BTN_MIDDLE) and device.has(EV_KEY.WHEEL):
