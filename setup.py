@@ -8,7 +8,7 @@ from setuptools import setup
 
 setup(
         name="keyboardmouse",
-        version="0.1",
+        version="0.1.2",
         description="Virtaul Keyboard Mouse",
         author="calllivecn",
         author_email="c-all@qq.com",
