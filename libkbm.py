@@ -73,14 +73,14 @@ def __grab_discard(device):
     """
     fd
     """
-    logger.debug("disable {}".format(dev.name))
+    logger.debug("disable {}".format(device.name))
     try:
-        dev.grab()
+        device.grab()
     except ev.device.DeviceGrabError:
-        logger.warn("{} grab() 失败".format(dev.name))
+        logger.warn("{} grab() 失败".format(device.name))
         return
 
-    for _ in dev.events():
+    for _ in device.events():
         pass
 
 def disableDevice(device):
