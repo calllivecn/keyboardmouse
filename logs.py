@@ -13,9 +13,6 @@ from os import path
 
 logger = logging.getLogger(sys.argv[0])
 
-if logger is None:
-    logger = logging.Logger(sys.argv[0])
-
 stream = logging.StreamHandler(sys.stderr)
 
 fmt = logging.Formatter("%(asctime)s %(filename)s:%(lineno)d %(levelname)s %(message)s", datefmt="%Y-%m-%d-%H:%M:%S")
