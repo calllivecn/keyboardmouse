@@ -6,6 +6,9 @@
 from setuptools import setup
 #from distutils.core import setup
 
+with open("LICENSE") as f:
+    LICENSE = f.read()
+
 setup(
         name="keyboardmouse",
         version="0.1.2",
@@ -13,6 +16,7 @@ setup(
         author="calllivecn",
         author_email="c-all@qq.com",
         url="https://github.com/calllivecn/keyboardmouse",
+        license=LICENSE,
         py_modules=["libkbm","libhotkey", "logs"],
         #packages=["libkbm"],
         install_requires=["libevdev>=0.7"],
