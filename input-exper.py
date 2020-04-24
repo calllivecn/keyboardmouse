@@ -29,7 +29,9 @@ def registers(kbms):
 
     return selector
 
-s = registers(libkbm.getkbm())
+mouses, keyboards = libkbm.getkbm()
+
+s = registers(mouses + keyboards)
 
 while True:
     #print("while 里面")
