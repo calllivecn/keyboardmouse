@@ -19,7 +19,7 @@ setup(
         license=LICENSE,
         py_modules=["libkbm","libhotkey", "logs"],
         #packages=["libkbm"],
-        install_requires=["libevdev>=0.7,<=0.8"],
+        install_requires=["libevdev>=0.7"],
         platforms=["linux"],
         scripts=["list-inputs.py", "checkkey.py"]
     )

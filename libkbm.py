@@ -69,18 +69,27 @@ def getkbm(baseinput="/dev/input"):
     #    device = libevdev.Device(fd)
     #    print(device.name)
 
-def __grab_discard(device):
+def __grab_discard(devicepath):
     """
-    fd
+     devicepath: /dev/input/event17
     """
-    logger.debug("disable {}".format(device.name))
+    logger.debug("disable {}".format(devicepath))
+
     try:
-        device.grab()
+        fd = open(devicepath, "rb")
+        devfd = ev.Device(fd)
+    except Exception as e:
+        logger.error(f"打开文件描述符 {devicepath} 失败。")
+        logger.error(f"异常: {e} ")
+        return
+
+    try:
+        devfd.grab()
     except ev.device.DeviceGrabError:
         logger.warn("{} grab() 失败".format(device.name))
         return
 
-    for _ in device.events():
+    for _ in devfd.events():
         pass
 
 def disableDevice(device):
@@ -88,14 +97,9 @@ def disableDevice(device):
     dev.grab() device.
     """
     with open(device, "rb") as fd:
-
-        devfd = ev.Device(fd)
-        if devfd.name == "Virtual Keyboard Mouse":
-            fd.close()
-            return 
-        
-        th = Thread(target=__grab_discard, args=(devfd,), daemon=True)
-        th.start()
+        if fd.name != "Virtual Keyboard Mouse":
+            th = Thread(target=__grab_discard, args=(device,), daemon=True)
+            th.start()
 
 
 class WatchHotKey:
@@ -160,7 +164,6 @@ class WatchHotKey:
 
     def close(self):
         self.selector.close()
-        pass
 
 
 class VirtualKeyboardMouse:
