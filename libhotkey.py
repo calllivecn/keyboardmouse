@@ -144,38 +144,33 @@ class HotKey:
         """
         return: callback function
         """
-        for key, event_ in self._selector.select():
-            logger.debug("self._selector.select()")
+        while True:
+            for key, event_ in self._selector.select():
+                logger.debug("self._selector.select()")
 
-            devfd = key.data
-            hotkey = self._hotkey_seq_dict
+                devfd = key.data
+                hotkey = self._hotkey_seq_dict
 
-            drop = False
-            try:
-                for e in devfd.events():
+                try:
+                    for e in devfd.events():
 
-                    if drop:
-                        for e in devfd.sync():
-                            logger.debug(e)
-                        drop = False
+                        if e.matches(ev.evbit("EV_KEY")):
+                            logger.debug(f"key: {e.code.name} value: {e.value}")
+                            logger.debug(f"hotkey: {hotkey}")
+                            logger.debug("-"*60)
 
-                    if e.matches(ev.evbit("EV_KEY")):
-                        logger.debug(f"key: {e.code.name} value: {e.value}")
-                        logger.debug(f"hotkey: {hotkey}")
-                        logger.debug("-"*60)
+                            # 这个事件在hotkey seq
+                            if e.value == 1 and e.code in hotkey:
+                                hotkey = hotkey.get(e.code)
+                                if hasattr(hotkey, "__call__"):
+                                    return hotkey
+                            elif e.value == 0 and e.code in hotkey:
+                                hotkey = self._hotkey_seq_dict
 
-                        # 这个事件在hotkey seq
-                        if e.value == 1 and e.code in hotkey:
-                            hotkey = hotkey.get(e.code)
-                            if hasattr(hotkey, "__call__"):
-                                flag = True
-                                return hotkey
-                        elif e.value == 0 and e.code in hotkey:
-                            hotkey = self._hotkey_seq_dict
-
-            except EventsDroppedException:
-                logger.warning("EventsDroppedException")
-                drop = True
+                except EventsDroppedException:
+                    logger.warning("EventsDroppedException")
+                    for e in devfd.sync():
+                        logger.debug(e)
 
         logger.debug("从这里返回的？？？？")
 
