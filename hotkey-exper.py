@@ -30,10 +30,9 @@ def registers(kbms):
 
     for kbm in kbms:
         print("加入：", kbm)
-        #fd = os.open(kbm, os.O_NONBLOCK | os.O_RDONLY)
-        fd = os.open(kbm, os.O_NONBLOCK | os.O_RDWR)
+        fd = os.open(kbm, os.O_NONBLOCK | os.O_RDONLY)
+        #fd = os.open(kbm, os.O_NONBLOCK | os.O_RDWR)
         fdobj = open(fd, "rb")
-        #fcntl.fcntl(fd, fcntl.F_SETFL, os.O_NONBLOCK)
         device = Device(fdobj)
 
         if MODE == REPLACE:

@@ -11,7 +11,7 @@ with open("LICENSE") as f:
 
 setup(
         name="keyboardmouse",
-        version="0.1.2",
+        version="0.2.0",
         description="Virtaul Keyboard Mouse",
         author="calllivecn",
         author_email="c-all@qq.com",
