@@ -42,7 +42,10 @@ def getkbm(baseinput="/dev/input"):
         try:
             device = Device(devfd)
         except (OSError, Exception) as e :
-            logger.debug("打开 {} 异常：{}".format(dev, e))
+            logger.info("打开 {} 异常：{}".format(dev, e))
+            continue
+
+        if device.name == "Virtual Keyboard Mouse":
             continue
     
         #if device.has(EV_REL.REL_X) device.has(EV_REL.REL_Y and device.has(EV_KEY.BTN_LEFT) and device.has(EV_KEY.BTN_RIGHT) and device.has(EV_KEY.BTN_MIDDLE) and device.has(EV_KEY.WHEEL):
@@ -86,7 +89,7 @@ def __grab_discard(devicepath):
     try:
         devfd.grab()
     except ev.device.DeviceGrabError:
-        logger.warn("{} grab() 失败".format(device.name))
+        logger.warn("{} grab() 失败".format(devicepath.name))
         return
 
     for _ in devfd.events():
@@ -100,70 +103,6 @@ def disableDevice(device):
         if fd.name != "Virtual Keyboard Mouse":
             th = Thread(target=__grab_discard, args=(device,), daemon=True)
             th.start()
-
-
-class WatchHotKey:
-    """
-    
-    """
-    def __init__(self, masterkey, key):
-
-        self.mouses, self.keyboards = getkbm()
-        
-        masterkey = masterkey.upper()
-        key = key.upper()
-
-        if masterkey == "ALT":
-            masterkey = "LEFTALT"
-        elif masterkey == "CTRL":
-            masterkey = "LEFTCTRL"
-
-        if key == "ALT":
-            key = "LEFTALT"
-        elif key == "CTRL":
-            key = "LEFTCTRL"
-
-        logger.debug(f"masterkey: {masterkey} key: {key}")
-
-        self.mkey = ev.evbit("KEY_" + masterkey)
-        self.key = ev.evbit("KEY_" + key)
-
-        logger.debug(f"init --> mkey: {self.mkey} key: {self.key}")
-
-        self.selector = selectors.DefaultSelector()
-        for device in self.keyboards:
-            # 之后记得关
-            fd = open(device, "rb")
-            devfd = ev.Device(fd)
-            self.selector.register(devfd.fd, selectors.EVENT_READ, devfd)
-
-
-    def watch(self):
-        """
-        return: True
-        """
-        for key, event in self.selector.select():
-            logger.debug(f"selector.select() --> key: {key} event: {event}")
-            devfd = key.data
-            flag_mkey = False
-            for e in devfd.events():
-
-                logger.debug(f"按键事件：{e}")
-
-                if e.matches(self.mkey, 1):
-                    flag_mkey = True
-                    logger.debug(f"主键按下：{self.mkey}")
-                elif e.matches(self.mkey, 0):
-                    flag_mkey = False
-                    logger.debug(f"主键弹起：{self.mkey}")
-
-                if e.matches(self.key, 1) and flag_mkey:
-                    logger.debug(f"副键按下：{self.key}，触发执行。")
-                    return True
-                
-
-    def close(self):
-        self.selector.close()
 
 
 class VirtualKeyboardMouse:

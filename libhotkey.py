@@ -12,7 +12,8 @@ from selectors import DefaultSelector, EVENT_READ, EVENT_WRITE
 import libevdev as ev
 from libevdev import (
                         Device, InputEvent, evbit,
-                        EV_REL,EV_KEY
+                        EV_REL,EV_KEY,
+                        EventsDroppedException,
                         )
 
 
@@ -144,25 +145,39 @@ class HotKey:
         return: callback function
         """
         for key, event_ in self._selector.select():
+            logger.debug("self._selector.select()")
 
             devfd = key.data
             hotkey = self._hotkey_seq_dict
-            forwardback = 0 # choice: 1: 前进， 2： 后退， 0： 还原
 
-            for e in devfd.events():
+            drop = False
+            try:
+                for e in devfd.events():
 
-                if e.matches(ev.evbit("EV_KEY")):
-                    logger.debug(f"key: {e.code.name} value: {e.value}")
-                    logger.debug(f"hotkey: {hotkey}")
-                    logger.debug("-"*60)
-                # 这个事件在hotkey seq
+                    if drop:
+                        for e in devfd.sync():
+                            logger.debug(e)
+                        drop = False
 
-                if e.value == 1 and e.code in hotkey:
-                    hotkey = hotkey.get(e.code)
-                    if hasattr(hotkey, "__call__"):
-                        return hotkey
-                elif e.value == 0 and e.code in hotkey:
-                    hotkey = self._hotkey_seq_dict
+                    if e.matches(ev.evbit("EV_KEY")):
+                        logger.debug(f"key: {e.code.name} value: {e.value}")
+                        logger.debug(f"hotkey: {hotkey}")
+                        logger.debug("-"*60)
+
+                        # 这个事件在hotkey seq
+                        if e.value == 1 and e.code in hotkey:
+                            hotkey = hotkey.get(e.code)
+                            if hasattr(hotkey, "__call__"):
+                                flag = True
+                                return hotkey
+                        elif e.value == 0 and e.code in hotkey:
+                            hotkey = self._hotkey_seq_dict
+
+            except EventsDroppedException:
+                logger.warning("EventsDroppedException")
+                drop = True
+
+        logger.debug("从这里返回的？？？？")
 
     def watchrun(self):
         func = self.watch()
