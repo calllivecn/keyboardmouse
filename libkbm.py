@@ -24,7 +24,7 @@ from libevdev import (
                         )
 
 
-from logs import logger, setLevel
+# from logs import logger, setLevel
 
 
 def getkbm(baseinput="/dev/input"):
