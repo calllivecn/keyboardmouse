@@ -11,6 +11,7 @@ kbm is keyboard mouse
 #__all__ = [
 
 import os
+import logging
 import selectors
 from os import path
 from time import sleep
@@ -25,6 +26,8 @@ from libevdev import (
 
 
 # from logs import logger, setLevel
+
+logger = logging.getLogger(__name__)
 
 
 def getkbm(baseinput="/dev/input"):
@@ -61,8 +64,8 @@ def getkbm(baseinput="/dev/input"):
             logger.info("应该是键盘了: {} 路径：{}".format(device.name, device.fd))
             keyboards.append(devpath)
     
-        #else:
-            #print("其他输入设备：", device.name, "路径：",device.fd)
+        else:
+            logger.info("其他输入设备：", device.name, "路径：",device.fd)
     
         devfd.close()
 
@@ -110,6 +113,30 @@ class VirtualKeyboardMouse:
     虚拟键盘鼠标
     """
     def __init__(self):
+    
+        self._delay = 0.01
+
+        # 鼠标事件类型
+        mouse0 = [ evbit(0, i) for i in range(15) ]
+        mouse1 = [ evbit(1, i) for i in range(272, 276+1) ]
+        mouse2 = [ evbit(2, 0), evbit(2, 1), evbit(2, 8), evbit(2, 11) ]
+        mouse = mouse0 + mouse1 + mouse2
+
+        # 键盘事件类型
+        keyboard = [ evbit(1, i) for i in range(1, 128+1) ]
+
+        self.events = mouse + keyboard
+    
+        # key event 可输出的字符元组
+
+        self.keyevents2strings = []
+        for e in self.events:
+            if e.name.startswith("KEY_"):
+                self.keyevents2strings.append(e.name.lstrip("KEY_"))
+            elif e.name.startswith("BTN_"):
+                self.keyevents2strings.append(e.name.lstrip("BTN_"))
+
+    def create_device(self):
         self.device = Device()
         self.device.name = "Virtual Keyboard Mouse"
         self.__add_mouse_keyboard_events()
@@ -118,9 +145,6 @@ class VirtualKeyboardMouse:
         # 在创建虚拟输入设备后等一秒，马上使用设备，
         # 会导致事件不生效。
         sleep(1)
-
-        self._delay = 0.01
-
 
     @property
     def delay(self):
@@ -141,32 +165,18 @@ class VirtualKeyboardMouse:
 
         self.device.enable(ev.EV_MSC.MSC_SCAN)
 
-        # 鼠标事件类型
-        mouse0 = [ evbit(0, i) for i in range(15) ]
-        mouse1 = [ evbit(1, i) for i in range(272, 276+1) ]
-        mouse2 = [ evbit(2, 0), evbit(2, 1), evbit(2, 8), evbit(2, 11) ]
-        mouse = mouse0 + mouse1 + mouse2
-
-        # 键盘事件类型
-        keyboard = [ evbit(1, i) for i in range(1, 128+1) ]
-
-        self.events = mouse + keyboard
-
         # LEDs
         #led = [ evbit(17, 0), evbit(17, 1), evbit(17, 2) ]
 
         for e in self.events:
             self.device.enable(e)
-
+    
     def listkey(self):
         """
         list all support key.
         """
-        for e in self.events:
-            if e.name.startswith("KEY_"):
-                print(e.name.lstrip("KEY_"))
-            elif e.name.startswith("BTN_"):
-                print(e.name.lstrip("BTN_"))
+        for e in self.keyevents2strings:
+                print(e)
 
     def __mousebtn2seq(self, btn, downup=1):
         """

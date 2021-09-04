@@ -11,7 +11,7 @@ with open("LICENSE") as f:
 
 setup(
         name="keyboardmouse",
-        version="0.2.0",
+        version="0.3.0",
         description="Virtaul Keyboard Mouse",
         author="calllivecn",
         author_email="c-all@qq.com",
@@ -21,5 +21,5 @@ setup(
         #packages=["libkbm"],
         install_requires=["libevdev>=0.7"],
         platforms=["linux"],
-        scripts=["list-inputs.py", "checkkey.py"]
+        scripts=["list-inputs.py", "checkkey.py", "mouse.py"]
     )
