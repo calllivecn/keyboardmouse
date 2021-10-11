@@ -17,7 +17,7 @@ setup(
         author_email="c-all@qq.com",
         url="https://github.com/calllivecn/keyboardmouse",
         license=LICENSE,
-        py_modules=["libkbm","libhotkey", "logs"],
+        py_modules=["libkbm","libhotkey", "logs", "mouse",],
         #packages=["libkbm"],
         install_requires=["libevdev>=0.7"],
         platforms=["linux"],
