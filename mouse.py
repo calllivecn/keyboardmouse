@@ -7,6 +7,7 @@ import sys
 import socket
 import struct
 import argparse
+import traceback
 from enum import Enum, auto
 
 from libkbm import VirtualKeyboardMouse
@@ -84,6 +85,37 @@ class Cmd:
         self.keyname = keyname
 
 
+def inputkey(mouse, cmd):
+    # 
+    if cmd.keyseq == KeySeq.MouseClick:
+        mouse.mouseclick(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.MouseDown:
+        mouse.mousebtndown(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.MouseUp:
+        mouse.mousebtnup(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.Key:
+        mouse.key(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.KeyDown:
+        mouse.keydown(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.KeyUp:
+        mouse.keyup(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.CtrlKey:
+        mouse.ctrlkey(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.AltKey:
+        mouse.altkey(cmd.keyname)
+
+    elif cmd.keyseq == KeySeq.ShiftKey:
+        mouse.shiftkey(cmd.keyname)
+
+
+
 def server(secret):
     mouse = VirtualKeyboardMouse()
     mouse.create_device()
@@ -100,36 +132,17 @@ def server(secret):
         except Exception as e:
             print(e)
             sock.sendto(e.args[0].encode("utf8"), addr)
-        else:
-            # 
-            if cmd.keyseq == KeySeq.MouseClick:
-                mouse.mouseclick(cmd.keyname)
+            continue
+        
+        try:
+            inputkey(mouse, cmd)
+        except AssertionError as e:
+            traceback.print_exc()
+            print("Error Key:", cmd.keyname)
+            sock.sendto(b"Error", addr)
+            continue
 
-            elif cmd.keyseq == KeySeq.MouseDown:
-                mouse.mousebtndown(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.MouseUp:
-                mouse.mousebtnup(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.Key:
-                mouse.key(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.KeyDown:
-                mouse.keydown(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.KeyUp:
-                mouse.keyup(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.CtrlKey:
-                mouse.ctrlkey(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.AltKey:
-                mouse.altkey(cmd.keyname)
-
-            elif cmd.keyseq == KeySeq.ShiftKey:
-                mouse.shiftkey(cmd.keyname)
-
-            sock.sendto(b"ok", addr)
+        sock.sendto(b"ok", addr)
 
 
 def client(cmd, keyseq, keyname):
