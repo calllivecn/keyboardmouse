@@ -6,3 +6,4 @@ keyboardmouse.egg-info/
 build/
 dist/
 *.swp
+*.pyz
