@@ -15,7 +15,7 @@ vkm = Path("keyboardmouse")
 
 setup(
         name="keyboardmouse",
-        version="0.3.0",
+        version="0.3.2",
         description="Virtaul Keyboard Mouse",
         author="calllivecn",
         author_email="c-all@qq.com",
