@@ -12,7 +12,7 @@ import selectors
 import libevdev as ev
 from libevdev import Device, InputEvent
 
-import libkbm
+from keyboardmouse import libkbm
 
 
 def registers(kbms):
