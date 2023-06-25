@@ -3,11 +3,15 @@
 # date 2019-09-11 20:30:10
 # author calllivecn <c-all@qq.com>
 
+from pathlib import Path
+
 from setuptools import setup
 #from distutils.core import setup
 
 with open("LICENSE") as f:
     LICENSE = f.read()
+
+vkm = Path("keyboardmouse")
 
 setup(
         name="keyboardmouse",
@@ -17,8 +21,8 @@ setup(
         author_email="c-all@qq.com",
         url="https://github.com/calllivecn/keyboardmouse",
         license=LICENSE,
-        py_modules=["libkbm","libhotkey", "logs", "mouse",],
-        #packages=["libkbm"],
+        #py_modules=["libkbm","libhotkey", "logs", "mouse",],
+        packages=[str(vkm)],
         install_requires=["libevdev>=0.7"],
         platforms=["linux"],
         scripts=["list-inputs.py", "checkkey.py", "mouse.py"],
