@@ -186,7 +186,7 @@ def main():
     parse = argparse.ArgumentParser(
         usage="%(prog)s [option] <KeyName>",
         description="使用C/S做的，虚拟鼠标键盘。"
-        "使用前需要先用root权限启动server端。",
+        "使用前需要先启动server端(用户需要在input用户组内或者使用root启动)。",
         add_help=False,
         epilog="",
     )

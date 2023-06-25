@@ -21,5 +21,6 @@ setup(
         #packages=["libkbm"],
         install_requires=["libevdev>=0.7"],
         platforms=["linux"],
-        scripts=["list-inputs.py", "checkkey.py", "mouse.py"]
+        scripts=["list-inputs.py", "checkkey.py", "mouse.py"],
+        options={'bdist_wheel': {'universal': True}},
     )
