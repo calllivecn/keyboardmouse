@@ -18,7 +18,7 @@ setup(
         version="0.3.2",
         description="Virtaul Keyboard Mouse",
         author="calllivecn",
-        author_email="c-all@qq.com",
+        author_email="calllivecn@gmail.com",
         url="https://github.com/calllivecn/keyboardmouse",
         license=LICENSE,
         #py_modules=["libkbm","libhotkey", "logs", "mouse",],
