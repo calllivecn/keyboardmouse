@@ -24,7 +24,8 @@ setup(
         #py_modules=["libkbm","libhotkey", "logs", "mouse",],
         packages=[str(vkm)],
         install_requires=["libevdev>=0.7"],
+        python_requires='>=3.8,<3.12',
         platforms=["linux"],
         scripts=["list-inputs.py", "checkkey.py"],
-        options={'bdist_wheel': {'universal': True}},
+        #options={"bdist_wheel": True},
     )
