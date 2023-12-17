@@ -1,0 +1,33 @@
+[build-system]
+# These are the assumed default build requirements from pip:
+# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
+requires = ["setuptools>=48.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "keyboardmouse"
+version = "0.3.2"
+requires-python = ">= 3.8"
+dependencies = [
+	"libevdev>=0.7",
+]
+
+authors = [
+	{ name="calllivecn", email="calllive@gmail.com"},
+]
+description = "Virtual Keyboard Mouse"
+keywords = ["virtual", "keyboard", "mouse"]
+
+readme = "README.md"
+license = {file = "LICENSE"}
+
+# 这种不能直接把一个单独的文件作为命令安装
+#[project.scripts]
+#ckeckkey = "ckechkey"
+#list-inputs = "list-inputs"
+
+[project.urls]
+Homepage="https://github.com/calllivecn/keyboardmouse"
+Issues="https://github.com/calllivecn/keyboardmouse/issues"
+
