@@ -26,6 +26,7 @@ replace 模式，还有问题: 放滞...
 
 
 def registers(kbms):
+    print(f"{kbms=}")
     selector = selectors.DefaultSelector()
 
     for kbm in kbms:
@@ -87,7 +88,8 @@ def listenhotkey(e):
     return True
 
 
-s = registers(libkbm.getkbm())
+mouses, keyboards = libkbm.getkbm()
+s = registers(keyboards)
 
 while True:
     for fd, _ in s.select():
