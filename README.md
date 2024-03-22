@@ -17,6 +17,8 @@ python3 -m venv Venv
 pip install build
 
 python3 -m build
+or
+pip install .
 
 ```
 
