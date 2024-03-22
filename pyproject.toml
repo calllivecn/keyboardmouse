@@ -22,6 +22,12 @@ keywords = ["virtual", "keyboard", "mouse"]
 readme = "README.md"
 license = {file = "LICENSE"}
 
+classifiers = [
+    "Programming Language :: Python :: 3.8+",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: linux",
+]
+
 
 # 这种不能直接把一个单独的文件作为命令安装
 #[project.scripts]
