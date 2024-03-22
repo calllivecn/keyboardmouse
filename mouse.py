@@ -10,7 +10,7 @@ import argparse
 import traceback
 from enum import Enum, auto
 
-from .libkbm import VirtualKeyboardMouse
+from keyboardmouse.libkbm import VirtualKeyboardMouse
 
 # lenght 32 byte
 SECRET=b"0bV2mzu1mDVnfVJus2g0RcJ3wW6qYXLg"
