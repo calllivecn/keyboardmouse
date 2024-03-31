@@ -1,6 +1,6 @@
 #!/bin/bash
 # date 2019-10-12 11:03:45
-# author calllivecn <c-all@qq.com>
+# author calllivecn <calllivecn@outlook.com>
 
 
 TMP="mouse"
