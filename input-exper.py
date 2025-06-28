@@ -15,8 +15,7 @@ from libevdev import Device, InputEvent
 from keyboardmouse import libkbm
 
 
-def registers(kbms):
-    selector = selectors.DefaultSelector()
+def registers(kbms, selector):
 
     for kbm in kbms:
         print("加入：", kbm)
@@ -27,28 +26,32 @@ def registers(kbms):
 
         selector.register(device.fd, selectors.EVENT_READ, data=device)
 
-    return selector
 
-mouses, keyboards = libkbm.getkbm()
 
-s = registers(mouses + keyboards)
+def run(s):
+    mouses, keyboards = libkbm.getkbm()
+    registers(mouses + keyboards, s)
 
-while True:
-    #print("while 里面")
-    for fd, event in s.select():
-        #print("for select() 里面")
-        try:
-            for e in fd.data.events():
-                #print("for events() 里面")
-                if e.matches(ev.EV_KEY):
-                    print(e)
-                else:
-                    print("======= 不是key事件：=======", e)
-        except ev.EventsDroppedException:
-            print("eventsDroppedException:")
-            for err in ev.sync():
-                print("except:", err)
+    while True:
+        #print("while 里面")
+        for fd, event in s.select():
+            #print("for select() 里面")
+            try:
+                for e in fd.data.events():
+                    #print("for events() 里面")
+                    if e.matches(ev.EV_KEY):
+                        print(e)
+                    else:
+                        print("======= 不是key事件：=======", e)
+            except ev.EventsDroppedException:
+                print("eventsDroppedException:")
+                for err in ev.sync():
+                    print("except:", err)
 
+
+
+with selectors.DefaultSelector() as s:
+    run(s)
 
 """
 成功了～～～
