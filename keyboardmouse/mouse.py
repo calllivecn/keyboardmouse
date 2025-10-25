@@ -17,7 +17,7 @@ SECRET=b"0bV2mzu1mDVnfVJus2g0RcJ3wW6qYXLg"
 
 ADDR=("::1", 15886)
 
-MouseKeys=("left", "right", "wheel")
+MouseKeys=("left", "right", "middle")
 
 class KeySeq(Enum):
     Key = auto()
