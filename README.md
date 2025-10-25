@@ -36,13 +36,12 @@ options:
   --ctrlkey CTRLKEY     按下ctrl键，加上这个键的组合健。
   --altkey ALTKEY       按下alt键，加上这个键的组合健。
   --shiftkey SHIFTKEY   按下shift键，加上这个键的组合健。
-  --mouseclick {left,right,wheel}
-                        点击鼠标键：必须是：('left', 'right', 'wheel') 之一。
-  --mousedown {left,right,wheel}
-                        按下鼠标键：必须是：('left', 'right', 'wheel') 之一。
-  --mouseup {left,right,wheel}
-                        释放鼠标键：必须是：('left', 'right', 'wheel') 之一
-
+  --mouseclick {left,right,middle}
+                        点击鼠标键：必须是：('left', 'right', 'middle') 之一。
+  --mousedown {left,right,middle}
+                        按下鼠标键：必须是：('left', 'right', 'middle') 之一。
+  --mouseup {left,right,middle}
+                        释放鼠标键：必须是：('left', 'right', 'middle') 之一。
 ```
 
 ## 查看对应键的键名和键值 运行 input-expoer.py 然后按下键盘上的按键或动下鼠标就可以看到类似如下输出。
