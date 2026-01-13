@@ -27,20 +27,26 @@ driver_version (int):
 底层 evdev 驱动的版本。
 """
 
-import glob
-import traceback
-
+import os
+# import traceback
+from pathlib import Path
 import libevdev
 
-def list_all_devices():
-    # 遍历所有可能的 event 节点
-    devices = glob.glob("/dev/input/event*")
-    devices.sort()
+baseinput="/dev/input"
 
+inputs = []
+for devnode in os.listdir(baseinput):
+    devpath = Path(baseinput) / devnode
+    if not devpath.is_dir():
+        inputs.append(devpath)
+
+
+def list_all_devices():
     print(f"{'Path':<20} {'Bus':<6} {'VID':<6} {'PID':<6} {'Name'}")
     print("-" * 60)
 
-    for path in devices:
+    # 遍历所有可能的 event 节点
+    for path in inputs:
         with open(path, "rb") as fp:
             try:
                 # 以只读方式打开设备
@@ -53,15 +59,15 @@ def list_all_devices():
                 bus = device.id["bustype"]
 
                 # 打印信息 (VID/PID 格式化为 16 进制)
-                print(f"{path} {bus=} {vid=:04x} {pid=:04x} {name=} {device=} {device.id=} {device.phys=}")
+                print(f"{path} {bus=} {vid=:04x} {pid=:04x} {name=} {device=} {device.id=} {device.phys}")
                 # print(f"{path} {bus=} {vid=:04x} {pid=:04x} {name=} {device=} {device.id=} {dir(device)=}")
 
             except OSError as e:
-                print(f"{path:<20} [Error: {e}]")
-                traceback.print_exception(e)
+                print(f"{path=} [Error: {e}]")
+                # traceback.print_exception(e)
             except Exception as e:
-                print(f"{path:<20} [Error: {e}]")
-                traceback.print_exception(e)
+                print(f"{path=} [Error: {e}]")
+                # traceback.print_exception(e)
 
 
 if __name__ == "__main__":
