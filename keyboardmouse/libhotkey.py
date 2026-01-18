@@ -5,9 +5,12 @@
 
 
 import os
-from os import path
-from time import sleep
+import fcntl
 from selectors import DefaultSelector, EVENT_READ, EVENT_WRITE
+
+from typing import (
+    BinaryIO,
+)
 
 import libevdev as ev
 from libevdev import (
@@ -19,6 +22,14 @@ from libevdev import (
 
 import libkbm
 from logs import logger
+
+
+# 设置为非阻塞模式
+def open_nonblocking(devpath: str) -> BinaryIO:
+    fd = open(devpath, 'rb')
+    flags = fcntl.fcntl(fd.fileno(), fcntl.F_GETFL, 0)
+    fcntl.fcntl(fd.fileno(), fcntl.F_SETFL, flags | os.O_NONBLOCK)
+    return fd
 
 
 class HotKeyError(Exception):
@@ -62,9 +73,12 @@ class HotKey:
         self._selector = DefaultSelector()
         self._fileobjs = []
         for device in self.kbms:
-            fd = open(device, "rb")
+
+            fd = open_nonblocking(device)
+
             devfd = Device(fd)
-            self._selector.register(devfd.fd, EVENT_READ, devfd)
+            # self._selector.register(devfd.fd, EVENT_READ, devfd)
+            self._selector.register(fd, EVENT_READ, devfd)
             self._fileobjs.append(fd)
 
     @property

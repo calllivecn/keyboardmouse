@@ -11,12 +11,15 @@ kbm is keyboard mouse
 #__all__ = [
 
 import os
+import fcntl
 import logging
-import selectors
 from os import path
 from time import sleep
 from threading import Thread
 
+from typing import (
+    BinaryIO,
+)
 
 import libevdev as ev
 from libevdev import (
@@ -30,6 +33,15 @@ from libevdev import (
 logger = logging.getLogger(__name__)
 
 
+# 设置为非阻塞模式
+def open_nonblocking(devpath: str) -> BinaryIO:
+    fd = open(devpath, 'rb')
+    flags = fcntl.fcntl(fd.fileno(), fcntl.F_GETFL, 0)
+    fcntl.fcntl(fd.fileno(), fcntl.F_SETFL, flags | os.O_NONBLOCK)
+    return fd
+
+
+
 def getkbm(baseinput="/dev/input"):
     mouses = []
     keyboards = []
@@ -38,12 +50,12 @@ def getkbm(baseinput="/dev/input"):
 
         devpath = path.join(baseinput, dev)
         if not path.isdir(devpath):
-            devfd = open(devpath, 'rb')
+            fd = open_nonblocking(devpath)
         else:
             continue
 
         try:
-            device = Device(devfd)
+            device = Device(fd)
         except (OSError, Exception) as e :
             logger.info("打开 {} 异常：{}".format(dev, e))
             continue
@@ -67,7 +79,7 @@ def getkbm(baseinput="/dev/input"):
         else:
             logger.info("其他输入设备：", device.name, "路径：",device.fd)
     
-        devfd.close()
+        fd.close()
 
     return (mouses, keyboards)
     
@@ -82,7 +94,7 @@ def __grab_discard(devicepath):
     logger.debug("disable {}".format(devicepath))
 
     try:
-        fd = open(devicepath, "rb")
+        fd = open_nonblocking(devicepath)
         devfd = ev.Device(fd)
     except Exception as e:
         logger.error(f"打开文件描述符 {devicepath} 失败。")
