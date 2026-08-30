@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 authors = [
-	{ name="calllivecn", email="calllive@gmail.com"},
+	{ name="calllivecn", email="calllivecn@outlook.com"},
 ]
 description = "Virtual Keyboard Mouse"
 keywords = ["virtual", "keyboard", "mouse"]

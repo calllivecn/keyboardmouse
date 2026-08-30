@@ -4,6 +4,7 @@
 # author calllivecn <calllivecn@outlook.com>
 
 import sys
+import time
 import socket
 import struct
 import argparse
@@ -86,7 +87,7 @@ class Cmd:
 
 
 def inputkey(mouse, cmd):
-    # 
+
     if cmd.keyseq == KeySeq.MouseClick:
         mouse.mouseclick(cmd.keyname)
 
@@ -116,8 +117,9 @@ def inputkey(mouse, cmd):
 
 
 
-def server(secret):
+def server(secret, delay: float = 0.05):
     mouse = VirtualKeyboardMouse()
+    mouse.delay = delay
     mouse.create_device()
 
     sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
@@ -195,8 +197,12 @@ def main():
     parse.add_argument("--list", action="store_true", help="列出一些可以使用和键的示例")
     parse.add_argument("--secret", action="store", default=SECRET, type=check_secret, help="指定通信secret")
 
+    parse.add_argument("--delay", action="store", default=0.05, type=float, help="设置全局的按键之间的延迟(单位秒, 浮点数)")
+
     group = parse.add_mutually_exclusive_group()
     group.add_argument("--server", action="store_true", help="启动Server需要input用户组或者root权限。")
+
+    group.add_argument("--sleep", action="store", type=float, help="等待指定时间(单位秒, 浮点数)")
 
     group.add_argument("--key", action="store", help="按下一个键，后松开。")
     group.add_argument("--keydown", action="store", help="按下一个键, 不松开。")
@@ -222,11 +228,17 @@ def main():
     
     if args.server:
         try:
-            server(args.secret)
+            server(args.secret, args.delay)
         except KeyboardInterrupt:
             pass
 
         sys.exit(0)
+
+
+    if args.sleep:
+        time.sleep(args.sleep)
+        sys.exit(0)
+
     
     cmd = Cmd(args.secret)
     if args.key:

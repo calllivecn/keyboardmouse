@@ -26,10 +26,14 @@ cp -rv keyboardmouse/ "$TMP/"
 cp -v mouse.py "$TMP/__main__.py"
 
 
+# 安装依赖
+pip install -t "$TMP" -r requirements.txt
+
+
 # cat >"$TMP/__main__.py"<<EOF
 # from keyboardmouse import mouse
 # mouse.main()
 # EOF
 
-python3 -m zipapp "$TMP" -c -o mouse.pyz -p "/usr/bin/env python3"
+python3 -m zipapp "$TMP" -c -o mouse.pyz -p "/usr/bin/env python"
 
